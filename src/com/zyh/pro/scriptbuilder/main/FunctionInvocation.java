@@ -25,4 +25,9 @@ public class FunctionInvocation {
 	public String getFunctionName() {
 		return functionName;
 	}
+
+	@Override
+	public String toString() {
+		return functionName + " , " + params;
+	}
 }

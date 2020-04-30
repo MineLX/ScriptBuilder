@@ -1,18 +1,13 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.*;
+import com.zyh.pro.scanner.main.CompositeToResult;
+import com.zyh.pro.scanner.main.IStringScanner;
+import com.zyh.pro.scanner.main.ToResult;
 
-import static java.lang.String.valueOf;
+public class FunctionParamsTokenizer {
 
-public class FunctionParamsTokenizer extends ChainTokenizer {
-
-	public FunctionParamsTokenizer(String source) {
-		super(new Scanner(source));
-	}
-
-	@Override
-	protected ToResult<String, IScanner> create() {
-		return new CompositeToResult<String, IScanner>()
+	public ToResult<String, IStringScanner> create() {
+		return new CompositeToResult<String, IStringScanner>()
 				.add(new TilMatcher(','))
 				.add(new SingleMatcher(","));
 	}

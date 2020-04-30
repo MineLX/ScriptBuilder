@@ -1,9 +1,9 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IScanner;
+import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.MatcherToResult;
-import com.zyh.pro.scanner.main.Scanner;
-import com.zyh.pro.scanner.main.TrimmedScanner;
+import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scanner.main.TrimmedStringScanner;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -52,31 +52,42 @@ public class ScriptContext {
 	}
 
 	public String calculateRightValue(String rightValueExpr) {
-		IScanner scanner = new TrimmedScanner(new Scanner(rightValueExpr));
+		IStringScanner scanner = new TrimmedStringScanner(new StringScanner(rightValueExpr));
 
 //		ValueParser parser = new ValueParser();
 //		IValue result = parser.parse(rightValueExpr);
 //		return result.asString();
 
-//		ReturnChain<ReturnValue, IScanner> build = new ReturnChain<ReturnValue, IScanner>()
+//		ReturnChain<ReturnValue, IStringScanner> build = new ReturnChain<ReturnValue, IStringScanner>()
 //				.next(new FunctionInvocationChain(this));
-		MatcherToResult<ReturnValue, IScanner> matcher =
+		MatcherToResult<ReturnValue, IStringScanner> matcher =
 				new MatcherToResult<>(new FunctionInvocationChain(this));
+//
+//		System.out.println("rightValueExpr = " + rightValueExpr);
+//		IValue returnValue = matcher.get(scanner);
 
-		IValue returnValue = matcher.get(scanner);
-		if (returnValue != null)
-			return returnValue.asString();
 
-		if (scanner.existsIf(Character::isDigit)) {
-			String value = scanner.nextFloat();
-			if (!scanner.isEmpty()) {
-				scanner.trim();
-				scanner.nextChar();
-				String secondValue = scanner.nextFloat();
-				value = valueOf(parseInt(secondValue) + parseInt(value));
-			}
-			return value;
-		}
-		return "#######";
+		ValueParser parser = new ValueParser(this);
+		System.out.println("scanner = " + scanner);
+		IValue parse = parser.parse(scanner);
+		System.out.println("scanner = " + scanner);
+		return parse.asString();
+
+//		System.out.println("returnValue = " + returnValue.asString());
+
+//		if (returnValue != null)
+//			return returnValue.asString();
+//
+//		if (scanner.existsIf(Character::isDigit)) {
+//			String value = scanner.nextFloat();
+//			if (!scanner.isEmpty()) {
+//				scanner.trim();
+//				scanner.nextChar();
+//				String secondValue = scanner.nextFloat();
+//				value = valueOf(parseInt(secondValue) + parseInt(value));
+//			}
+//			return value;
+//		}
+//		return "#######";
 	}
 }

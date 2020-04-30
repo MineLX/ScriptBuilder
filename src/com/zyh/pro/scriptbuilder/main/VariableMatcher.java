@@ -1,7 +1,7 @@
 package com.zyh.pro.scriptbuilder.main;
 
 import com.zyh.pro.scanner.main.ReturnMatcher;
-import com.zyh.pro.scanner.main.Scanner;
+import com.zyh.pro.scanner.main.StringScanner;
 
 public class VariableMatcher implements ReturnMatcher<IValue, String> {
 	private final ScriptContext context;
@@ -10,17 +10,13 @@ public class VariableMatcher implements ReturnMatcher<IValue, String> {
 		this.context = context;
 	}
 
-	private IValue toVariableValue(String leafValueAsText) {
-		return new VariableValue(context, leafValueAsText);
+	@Override
+	public boolean isMatch(String variableValueAsText) {
+		return new StringScanner(variableValueAsText).existsIf(Character::isAlphabetic);
 	}
 
 	@Override
-	public boolean isMatch(String s) {
-		return new Scanner(s).existsIf(Character::isAlphabetic);
-	}
-
-	@Override
-	public IValue onMatched(String s) {
-		return toVariableValue(s);
+	public IValue onMatched(String variableValueAsText) {
+		return new VariableValue(context, variableValueAsText);
 	}
 }

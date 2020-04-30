@@ -1,18 +1,17 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IScanner;
-import com.zyh.pro.scanner.main.ReturnChain;
+import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.ReturnMatcher;
 
-public class PageMatcher implements ReturnMatcher<String, IScanner> {
+public class PageMatcher implements ReturnMatcher<String, IStringScanner> {
 
 	@Override
-	public boolean isMatch(IScanner scanner) {
+	public boolean isMatch(IStringScanner scanner) {
 		return scanner.existsIf(Character::isAlphabetic);
 	}
 
 	@Override
-	public String onMatched(IScanner scanner) {
+	public String onMatched(IStringScanner scanner) {
 		return scanner.nextPage();
 	}
 }

@@ -1,10 +1,9 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IScanner;
-import com.zyh.pro.scanner.main.ReturnChain;
+import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.ReturnMatcher;
 
-public class FunctionInvocationChain implements ReturnMatcher<ReturnValue, IScanner> {
+public class FunctionInvocationChain implements ReturnMatcher<ReturnValue, IStringScanner> {
 
 	private final ScriptContext context;
 
@@ -13,15 +12,16 @@ public class FunctionInvocationChain implements ReturnMatcher<ReturnValue, IScan
 	}
 
 	@Override
-	public ReturnValue onMatched(IScanner scanner) {
+	public ReturnValue onMatched(IStringScanner scanner) {
 		Function function = context.getFunction(scanner.nextPage());
 		Params params = new ParamsParser(context)
 				.parse(scanner.between('(', ')'));
+		System.out.println("params = " + params);
 		return function.execute(params);
 	}
 
 	@Override
-	public boolean isMatch(IScanner scanner) {
+	public boolean isMatch(IStringScanner scanner) {
 		return scanner.existsIf(Character::isAlphabetic);
 	}
 }

@@ -1,9 +1,8 @@
 package com.zyh.pro.scriptbuilder.test;
 
-import com.zyh.pro.scriptbuilder.main.ValueCalculator;
+import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scriptbuilder.main.*;
 import com.zyh.pro.scriptbuilder.main.ValueCalculator.Builder;
-import com.zyh.pro.scriptbuilder.main.ScriptContext;
-import com.zyh.pro.scriptbuilder.main.SumFunction;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -34,9 +33,13 @@ public class CalculatorTest {
 
 	@Test
 	public void builder() {
-		ValueCalculator calculator = new Builder(null).plus("1").multi("2").reduce("1").build();
+		ValueCalculator calculator = new Builder()
+				.plus(new Value("1"))
+				.multi(new Value("2"))
+				.reduce(new Value("1"))
+				.build();
 		assertThat(calculator.toValue().asString(), is("1"));
-		assertThat(new Builder(null).build().toValue().asString(), is("0"));
+		assertThat(new Builder().build().toValue().asString(), is("0"));
 	}
 
 	@Test
@@ -109,6 +112,18 @@ public class CalculatorTest {
 
 
 	private ValueCalculator tokenCalculator(ScriptContext context, List<String> tokens) {
-		return new Builder(context).tokens(tokens).build();
+		Builder builder = new Builder();
+
+		ValueParser parser = new ValueParser(context);
+
+		if (tokens.isEmpty())
+			return builder.build();
+
+		builder.plus(parser.parse(new StringScanner(tokens.get(0))));
+		for (int operandIndex = 1; operandIndex < tokens.size(); operandIndex += 2)
+			builder.operate(
+					Operators.ofString(tokens.get(operandIndex)),
+					parser.parse(new StringScanner(tokens.get(operandIndex + 1))));
+		return builder.build();
 	}
 }

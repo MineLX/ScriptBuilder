@@ -16,11 +16,8 @@ public class FunctionInvocationMatcher implements ReturnMatcher<IValue, String> 
 
 	@Override
 	public IValue onMatched(String s) {
-		return toFunctionValue(s);
-	}
-
-	private IValue toFunctionValue(String leafValueAsText) {
-		FunctionInvocation parse = new FunctionInvocationParser(context).parse(leafValueAsText);
-		return new FunctionValue(context, parse.getFunctionName(), parse.getParams());
+		FunctionInvocation invocation = new FunctionInvocationParser(context).parse(s);
+		System.out.println("invocation = " + invocation);
+		return new FunctionValue(context, invocation.getFunctionName(), invocation.getParams());
 	}
 }

@@ -1,6 +1,8 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.Scanner;
+import com.zyh.pro.scanner.main.IStringScanner;
+import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scanner.main.TrimmedStringScanner;
 
 public class FunctionInvocationParser {
 
@@ -11,7 +13,7 @@ public class FunctionInvocationParser {
 	}
 
 	public FunctionInvocation parse(String functionInvocationAsText) {
-		Scanner scanner = new Scanner(functionInvocationAsText);
+		IStringScanner scanner = new TrimmedStringScanner(new StringScanner(functionInvocationAsText));
 		String functionName = scanner.nextPage();
 		String paramsAsText = scanner.between('(', ')');
 		Params params = new ParamsParser(context).parse(paramsAsText);

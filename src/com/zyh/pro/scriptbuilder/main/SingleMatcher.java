@@ -1,11 +1,12 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IScanner;
+
+import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.ReturnMatcher;
 
 import static java.lang.String.valueOf;
 
-public class SingleMatcher implements ReturnMatcher<String, IScanner> {
+public class SingleMatcher implements ReturnMatcher<String, IStringScanner> {
 
 	private final String singleToken;
 
@@ -14,12 +15,12 @@ public class SingleMatcher implements ReturnMatcher<String, IScanner> {
 	}
 
 	@Override
-	public boolean isMatch(IScanner scanner) {
+	public boolean isMatch(IStringScanner scanner) {
 		return scanner.exists(singleToken);
 	}
 
 	@Override
-	public String onMatched(IScanner scanner) {
+	public String onMatched(IStringScanner scanner) {
 		return valueOf(scanner.nextChar());
 	}
 }

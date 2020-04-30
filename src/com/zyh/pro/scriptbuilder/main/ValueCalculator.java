@@ -75,50 +75,35 @@ public class ValueCalculator {
 
 		private final List<Operators> operators;
 
-		private final ValueParser parser;
-
-		public Builder(ScriptContext context) {
+		public Builder() {
 			operators = new ArrayList<>();
 			values = new ArrayList<>();
-			parser = new ValueParser(context);
 
 			values.add(new Value("0"));
 		}
 
-		public Builder plus(String expression) {
-			operateWith(PLUS, expression);
+		public Builder plus(IValue value) {
+			operate(PLUS, value);
 			return this;
 		}
 
-		public Builder reduce(String expression) {
-			operateWith(REDUCE, expression);
+		public Builder reduce(IValue value) {
+			operate(REDUCE, value);
 			return this;
 		}
 
-		public Builder multi(String expression) {
-			operateWith(MULTI, expression);
+		public Builder multi(IValue value) {
+			operate(MULTI, value);
 			return this;
 		}
 
-		private void operateWith(Operators operator, String expression) {
+		public void operate(Operators operator, IValue value) {
 			operators.add(operator);
-			values.add(parser.parse(expression));
+			values.add(value);
 		}
 
 		public ValueCalculator build() {
 			return new ValueCalculator(operators, values);
-		}
-
-		public Builder tokens(List<String> tokens) {
-			if (tokens.isEmpty())
-				return this;
-
-			plus(tokens.get(0));
-			for (int operandIndex = 1; operandIndex < tokens.size(); operandIndex += 2)
-				operateWith(
-						Operators.ofString(tokens.get(operandIndex)),
-						tokens.get(operandIndex + 1));
-			return this;
 		}
 	}
 }

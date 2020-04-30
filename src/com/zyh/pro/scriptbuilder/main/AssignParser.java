@@ -1,12 +1,12 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IScanner;
-import com.zyh.pro.scanner.main.Scanner;
-import com.zyh.pro.scanner.main.TrimmedScanner;
+import com.zyh.pro.scanner.main.IStringScanner;
+import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scanner.main.TrimmedStringScanner;
 
 public class AssignParser {
 	public Assignment parseAssignment(String assignmentAsText) {
-		IScanner scanner = new TrimmedScanner(new Scanner(assignmentAsText));
+		IStringScanner scanner = new TrimmedStringScanner(new StringScanner(assignmentAsText));
 		String left = scanner.nextPage();
 		scanner.trim();
 		scanner.nextChar();
