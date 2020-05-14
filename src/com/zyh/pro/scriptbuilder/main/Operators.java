@@ -41,18 +41,6 @@ public enum Operators {
 		this.changeSemanticsIfSwap = changeSemanticsIfSwap;
 	}
 
-	public static Operators ofString(String operandAsText) {
-		if (operandAsText.equals("+"))
-			return PLUS;
-		if (operandAsText.equals("-"))
-			return REDUCE;
-		if (operandAsText.equals("*"))
-			return MULTI;
-		if (operandAsText.equals("/"))
-			return DIVIDE;
-		return UNKNOWN;
-	}
-
 	public abstract IValue calculate(IValue left, IValue right);
 
 	public boolean biggerThan(Operators another) {
@@ -77,5 +65,17 @@ public enum Operators {
 
 	public boolean changeSemanticsIfSwap() {
 		return changeSemanticsIfSwap;
+	}
+
+	public static Operators ofString(String operandAsText) {
+		if (operandAsText.equals("+"))
+			return PLUS;
+		if (operandAsText.equals("-"))
+			return REDUCE;
+		if (operandAsText.equals("*"))
+			return MULTI;
+		if (operandAsText.equals("/"))
+			return DIVIDE;
+		return UNKNOWN;
 	}
 }

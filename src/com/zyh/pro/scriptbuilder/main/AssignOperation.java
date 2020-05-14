@@ -13,6 +13,7 @@ public class AssignOperation implements IOperation {
 
 	@Override
 	public void execute() {
-		context.setVariable(name, value.asString());
+//		context.setVariable(name, value.asString());
+		context.setVariable(name, value);
 	}
 }

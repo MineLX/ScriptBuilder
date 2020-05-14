@@ -17,7 +17,7 @@ public class CompositeOperation implements IOperation {
 			operation.execute();
 	}
 
-	public void addOperation(IOperation operation) {
+	public void add(IOperation operation) {
 		operations.add(operation);
 	}
 }

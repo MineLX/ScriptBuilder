@@ -11,6 +11,6 @@ public class VariableValue implements IValue {
 
 	@Override
 	public String asString() {
-		return context.getVariable(variableName);
+		return context.getVariable(variableName).asString();
 	}
 }

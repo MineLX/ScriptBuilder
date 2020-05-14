@@ -1,6 +1,8 @@
 package com.zyh.pro.scriptbuilder.main;
 
+import com.zyh.pro.scanner.main.CompositeToResult;
 import com.zyh.pro.scanner.main.Matcher;
+import com.zyh.pro.scanner.main.ToResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 
-public class SearchTree<ELEMENT, CLUE> {
+public class SearchTree<ELEMENT, CLUE> implements ToResult<ELEMENT, CLUE> {
 
 	private final List<SearchTree<ELEMENT, CLUE>> children;
 
@@ -22,7 +24,8 @@ public class SearchTree<ELEMENT, CLUE> {
 		children = new ArrayList<>();
 	}
 
-	public ELEMENT search(CLUE clue) {
+	@Override
+	public ELEMENT get(CLUE clue) {
 		if (!matcher.isMatch(clue))
 			return null;
 
@@ -33,7 +36,7 @@ public class SearchTree<ELEMENT, CLUE> {
 			return self;
 
 		for (SearchTree<ELEMENT, CLUE> child : children) {
-			ELEMENT childSearchResult = child.search(clue);
+			ELEMENT childSearchResult = child.get(clue);
 			if (childSearchResult != null)
 				return childSearchResult;
 		}
@@ -57,24 +60,24 @@ public class SearchTree<ELEMENT, CLUE> {
 	// FIXME 2020/4/27  wait for me!!!  move to Tree(Unmodifiable)
 	public static class Builder<ELEMENT, CLUE> {
 
-		private final SearchTree<ELEMENT, CLUE> root;
+		private final CompositeToResult<ELEMENT, CLUE> root;
 
-		public Builder(Matcher<CLUE> matcher) {
-			root = new SearchTree<>(null, matcher);
+		public Builder() {
+			root = new CompositeToResult<>();
 		}
 
 		public Path path(Matcher<CLUE> matcher) {
 			SearchTree<ELEMENT, CLUE> newTreePath = new SearchTree<>(null, matcher);
-			root.addChild(newTreePath);
+			root.add(newTreePath);
 			return new Path(newTreePath);
 		}
 
 		public Builder<ELEMENT, CLUE> end(ELEMENT leafValue, Matcher<CLUE> matcher) {
-			root.addChild(new SearchTree<>(leafValue, matcher));
+			root.add(new SearchTree<>(leafValue, matcher));
 			return this;
 		}
 
-		public SearchTree<ELEMENT, CLUE> build() {
+		public ToResult<ELEMENT, CLUE> build() {
 			return root;
 		}
 

@@ -8,8 +8,8 @@ public class SumFunction extends Function {
 	}
 
 	@Override
-	public ReturnValue execute(Params params) {
-		return new ReturnValue(valueOf(
+	public Value execute(Params params) {
+		return new Value(valueOf(
 				params.getParams().stream()
 						.map(IValue::asString).map(Integer::parseInt)
 						.reduce(0, Integer::sum)));

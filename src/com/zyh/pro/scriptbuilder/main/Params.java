@@ -1,6 +1,7 @@
 package com.zyh.pro.scriptbuilder.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Params {
@@ -26,5 +27,11 @@ public class Params {
 	@Override
 	public String toString() {
 		return "Params(" + values + ")";
+	}
+
+	public static Params of(IValue...values) {
+		Params result = new Params();
+		Arrays.stream(values).forEach(result::add);
+		return result;
 	}
 }

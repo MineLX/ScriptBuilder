@@ -1,33 +1,37 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.Sequence;
-import com.zyh.pro.scanner.main.StringScanner;
-import com.zyh.pro.scanner.main.TrimmedStringScanner;
+import com.zyh.pro.scanner.main.*;
 
 import java.io.PrintStream;
-import java.util.List;
+
+import static com.zyh.pro.scanner.main.ReturnMatcher.accepter;
+import static com.zyh.pro.scanner.main.ReturnMatcher.functional;
 
 public class ScriptInterpreter {
 
 	private final ScriptContext context;
 
+	private final ToResult<ToResult<IOperation, IStringScanner>, IStringScanner> parserMatcher;
+
 	public ScriptInterpreter(PrintStream out) {
 		context = new ScriptContext(out);
-		context.addFunction(new SumFunction(context));
 		context.addFunction(new PrintFunction(context));
+		context.addFunction(new SumFunction(context));
+
+		parserMatcher = new CompositeToResult<ToResult<IOperation, IStringScanner>, IStringScanner>()
+				.add(functional(scanner -> scanner.exists("function"), scanner -> new FunctionsParser(context)))
+				.add(accepter(new StatementsParser(context)));
 	}
 
-	public CompositeOperation interpret(String target) {
-		Sequence<String> sequence = new TrimmedStringScanner(new StringScanner(target))
-				.sequence(new StatementTokenizer().create());
-		List<String> statements = sequence.map(
-				tokens -> tokens.stream().reduce("", (one, another) -> one + another),
-				token -> token.equals(";"));
+	public IOperation interpret(String command) {
+		TrimmedStringScanner scanner = new TrimmedStringScanner(new StringScanner(command));
 
-		// parse ...
 		CompositeOperation result = new CompositeOperation();
-		OperationDispatcher dispatcher = new OperationDispatcher(context);
-		statements.stream().map(dispatcher::getOperation).forEach(result::addOperation);
+		while (scanner.hasNext()) {
+			ToResult<IOperation, IStringScanner> parser = parserMatcher.get(scanner.copy());
+			IOperation operation = parser.get(scanner);
+			result.add(operation);
+		}
 		return result;
 	}
 }

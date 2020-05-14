@@ -7,9 +7,9 @@ public class PrintFunction extends Function {
 	}
 
 	@Override
-	public ReturnValue execute(Params params) {
+	public Value execute(Params params) {
 		IValue value = params.get(0);
 		context.getOutputStream().print(value.asString());
-		return super.execute(params);
+		return null;
 	}
 }

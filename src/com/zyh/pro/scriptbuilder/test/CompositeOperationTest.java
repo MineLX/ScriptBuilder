@@ -10,7 +10,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CompositeOperationTest {
-
 	@Test
 	public void simple_test() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -21,7 +20,7 @@ public class CompositeOperationTest {
 
 		Params params = new Params();
 		params.add(new Value("printed"));
-		operation.addOperation(new InvokeFunctionOperation(context.getFunction("print"), params));
+		operation.add(new InvokeFunctionOperation(context, "print", params));
 
 		operation.execute();
 		assertThat(new String(output.toByteArray()), is("printed"));

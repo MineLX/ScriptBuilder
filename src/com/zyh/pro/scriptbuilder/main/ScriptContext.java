@@ -1,15 +1,7 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import com.zyh.pro.scanner.main.IStringScanner;
-import com.zyh.pro.scanner.main.MatcherToResult;
-import com.zyh.pro.scanner.main.StringScanner;
-import com.zyh.pro.scanner.main.TrimmedStringScanner;
-
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
@@ -20,19 +12,18 @@ public class ScriptContext {
 
 	private final PrintStream out;
 
-	private final Map<String, String> variables;
+	private final VarManager varManager;
 
 	public ScriptContext(PrintStream out) {
 		this.out = out;
 		functions = new ArrayList<>();
-		variables = new HashMap<>();
+		varManager = new VarManager();
 	}
 
 	public Function getFunction(String name) {
-		for (Function function : functions)
-			if (function.getName().equals(name))
-				return function;
-		return null;
+		return functions.stream()
+				.filter(function -> function.getName().equals(name))
+				.findFirst().orElse(null);
 	}
 
 	public void addFunction(Function function) {
@@ -43,51 +34,23 @@ public class ScriptContext {
 		return out;
 	}
 
-	public String getVariable(String name) {
-		return variables.get(name);
+	public void setVariable(String name, IValue value) {
+		varManager.setVariable(name, value);
 	}
 
-	public void setVariable(String name, String value) {
-		variables.put(name, value);
+	public IValue getVariable(String name) {
+		return varManager.getVariable(name);
 	}
 
-	public String calculateRightValue(String rightValueExpr) {
-		IStringScanner scanner = new TrimmedStringScanner(new StringScanner(rightValueExpr));
+	public void pushFunctionFrame(List<String> modelParams, Params realParams) {
+		varManager.pushFrame(modelParams, realParams.getParams());
+	}
 
-//		ValueParser parser = new ValueParser();
-//		IValue result = parser.parse(rightValueExpr);
-//		return result.asString();
+	public FunctionFrame popFunctionFrame() {
+		return varManager.popFrame();
+	}
 
-//		ReturnChain<ReturnValue, IStringScanner> build = new ReturnChain<ReturnValue, IStringScanner>()
-//				.next(new FunctionInvocationChain(this));
-		MatcherToResult<ReturnValue, IStringScanner> matcher =
-				new MatcherToResult<>(new FunctionInvocationChain(this));
-//
-//		System.out.println("rightValueExpr = " + rightValueExpr);
-//		IValue returnValue = matcher.get(scanner);
-
-
-		ValueParser parser = new ValueParser(this);
-		System.out.println("scanner = " + scanner);
-		IValue parse = parser.parse(scanner);
-		System.out.println("scanner = " + scanner);
-		return parse.asString();
-
-//		System.out.println("returnValue = " + returnValue.asString());
-
-//		if (returnValue != null)
-//			return returnValue.asString();
-//
-//		if (scanner.existsIf(Character::isDigit)) {
-//			String value = scanner.nextFloat();
-//			if (!scanner.isEmpty()) {
-//				scanner.trim();
-//				scanner.nextChar();
-//				String secondValue = scanner.nextFloat();
-//				value = valueOf(parseInt(secondValue) + parseInt(value));
-//			}
-//			return value;
-//		}
-//		return "#######";
+	public FunctionFrame getFunctionFrame() {
+		return varManager.getCurrentFrame();
 	}
 }

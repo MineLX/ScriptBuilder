@@ -1,32 +1,33 @@
 package com.zyh.pro.scriptbuilder.test;
 
-import com.zyh.pro.scriptbuilder.main.Function;
-import com.zyh.pro.scriptbuilder.main.ScriptContext;
-import com.zyh.pro.scriptbuilder.main.SumFunction;
+import com.zyh.pro.scriptbuilder.main.*;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
+import static com.zyh.pro.scriptbuilder.main.Params.of;
 import static java.lang.System.out;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class ScriptContextTest {
 	@Test
-	public void calculateRightValue() {
+	public void returnValue() {
 		ScriptContext context = new ScriptContext(out);
-		context.addFunction(new SumFunction(context));
-		assertThat(context.calculateRightValue("sum(1,2)"), is("3"));
-		assertThat(context.calculateRightValue("1 + 2"), is("3"));
+		context.pushFunctionFrame(emptyList(), of());
+		context.getFunctionFrame().setReturnValue(new Value("returnValue"));
+		assertThat(context.getFunctionFrame().getReturnValue().asString(), is("returnValue"));
+		assertThat(context.popFunctionFrame().getReturnValue().asString(), is("returnValue"));
+		assertNull(context.getFunctionFrame());
 	}
 
 	@Test
 	public void getVariable() {
 		ScriptContext context = new ScriptContext(out);
-		context.setVariable("a", "6");
-		String value = context.getVariable("a");
-		assertThat(value, is("6"));
+		context.setVariable("a", new Value("6"));
+		IValue value = context.getVariable("a");
+		assertThat(value.asString(), is("6"));
 	}
 
 	@Test

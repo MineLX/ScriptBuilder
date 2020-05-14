@@ -1,50 +1,66 @@
 package com.zyh.pro.scriptbuilder.main;
 
-import java.util.List;
+import java.util.Stack;
 
 import static com.zyh.pro.scriptbuilder.main.Operators.*;
 
 public class ArithmeticSequence {
 
-	private final List<Operators> operators;
+	private final Stack<Operators> operators;
 
-	private final List<String> numbers;
+	private final Stack<IValue> values;
 
-	public ArithmeticSequence(List<Operators> operators, List<String> numbers) {
-		this.operators = operators;
-		this.numbers = numbers;
+	public ArithmeticSequence() {
+		operators = new Stack<>();
+		values = new Stack<>();
+		values.push(new Value("0"));
 	}
 
-	public ArithmeticSequence plus(String expression) {
-		operateWith(PLUS, expression);
+	public ArithmeticSequence plus(IValue value) {
+		operateWith(PLUS, value);
 		return this;
 	}
 
-	public ArithmeticSequence reduce(String expression) {
-		operateWith(REDUCE, expression);
+	public ArithmeticSequence reduce(IValue value) {
+		operateWith(REDUCE, value);
 		return this;
 	}
 
-	public ArithmeticSequence multi(String expression) {
-		operateWith(MULTI, expression);
+	public ArithmeticSequence multi(IValue value) {
+		operateWith(MULTI, value);
 		return this;
 	}
 
-	public ArithmeticSequence operateWith(Operators operator, String expression) {
+	public ArithmeticSequence operateWith(Operators operator, IValue value) {
+		Operators prev = prevPushedOperator();
+		if (operator.lowerEquals(prev))
+			zipValues();
+
 		operators.add(operator);
-		numbers.add(expression);
+		values.add(value);
 		return this;
 	}
-	// FIXME 2020/4/28  wait for me!!!  pushValue
-	public ArithmeticSequence tokens(List<String> tokens) {
-		if (tokens.isEmpty())
-			return this;
 
-		plus(tokens.get(0));
-		for (int operandIndex = 1; operandIndex < tokens.size(); operandIndex += 2)
-			operateWith(
-					Operators.ofString(tokens.get(operandIndex)),
-					tokens.get(operandIndex + 1));
-		return this;
+	private Operators prevPushedOperator() {
+		if (operators.isEmpty())
+			return UNKNOWN;
+		return operators.peek();
+	}
+
+	public IValue pop() {
+		IValue firstPopped = values.pop();
+		IValue secondPopped = values.pop();
+		IValue result = operators.pop().calculate(secondPopped, firstPopped);
+		return values.push(result);
+	}
+
+	public IValue toValue() {
+		zipValues();
+		return values.peek();
+	}
+
+	public void zipValues() {
+		while (!operators.isEmpty())
+			pop();
 	}
 }

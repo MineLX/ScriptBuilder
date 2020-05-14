@@ -2,16 +2,20 @@ package com.zyh.pro.scriptbuilder.main;
 
 public class InvokeFunctionOperation implements IOperation {
 
-	private final Function function;
+	private final ScriptContext context;
+
 	private final Params params;
 
-	public InvokeFunctionOperation(Function function, Params params) {
+	private final String functionName;
+
+	public InvokeFunctionOperation(ScriptContext context, String functionName, Params params) {
+		this.context = context;
+		this.functionName = functionName;
 		this.params = params;
-		this.function = function;
 	}
 
 	@Override
 	public void execute() {
-		function.execute(params);
+		context.getFunction(functionName).execute(params);
 	}
 }

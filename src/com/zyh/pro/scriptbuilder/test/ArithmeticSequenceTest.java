@@ -2,44 +2,44 @@ package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scanner.main.StringScanner;
 import com.zyh.pro.scriptbuilder.main.*;
-import com.zyh.pro.scriptbuilder.main.ValueCalculator.Builder;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static com.zyh.pro.scriptbuilder.main.Operators.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class CalculatorTest {
+public class ArithmeticSequenceTest {
 	@Test
 	public void sum_function_as_expression() {
 		ScriptContext context = new ScriptContext(System.out);
 		context.addFunction(new SumFunction(context));
 
-		ValueCalculator calculator = tokenCalculator(context, asList("sum(1,2)", "+", "1"));
+		ArithmeticSequence calculator = tokenCalculator(context, asList("sum(1,2)", "+", "1"));
 		assertThat(calculator.toValue().asString(), is("4"));
 	}
 
 	@Test
 	public void init_builder_by_tokens() {
-		ValueCalculator build = tokenCalculator(null, asList("1", "+", "2"));
+		ArithmeticSequence build = tokenCalculator(null, asList("1", "+", "2"));
 		assertThat(build.toValue().asString(), is("3"));
 		assertThat(tokenCalculator(null, Collections.emptyList()).toValue().asString(), is("0"));
 	}
 
 	@Test
 	public void builder() {
-		ValueCalculator calculator = new Builder()
+		ArithmeticSequence sequence = new ArithmeticSequence()
 				.plus(new Value("1"))
 				.multi(new Value("2"))
-				.reduce(new Value("1"))
-				.build();
-		assertThat(calculator.toValue().asString(), is("1"));
-		assertThat(new Builder().build().toValue().asString(), is("0"));
+				.reduce(new Value("1"));
+		assertThat(sequence.toValue().asString(), is("1"));
+		assertThat(new ArithmeticSequence().toValue().asString(), is("0"));
 	}
 
 	@Test
@@ -77,31 +77,31 @@ public class CalculatorTest {
 
 	@Test
 	public void mixed_multi_and_plus() {
-		ValueCalculator calculation = tokenCalculator(null, asList("1", "+", "2", "+", "3", "*", "4"));
+		ArithmeticSequence calculation = tokenCalculator(null, asList("1", "+", "2", "+", "3", "*", "4"));
 		assertThat(calculation.toValue().asString(), is("15"));
 	}
 
 	@Test
 	public void multi() {
-		ValueCalculator calculation = tokenCalculator(null, asList("1", "*", "2"));
+		ArithmeticSequence calculation = tokenCalculator(null, asList("1", "*", "2"));
 		assertThat(calculation.toValue().asString(), is("2"));
 	}
 
 	@Test
 	public void mixed() {
-		ValueCalculator calculation = tokenCalculator(null, asList("1", "+", "1", "-", "1", "+", "2", "+", "4"));
+		ArithmeticSequence calculation = tokenCalculator(null, asList("1", "+", "1", "-", "1", "+", "2", "+", "4"));
 		assertThat(calculation.toValue().asString(), is("7"));
 	}
 
 	@Test
 	public void reduce() {
-		ValueCalculator calculation = tokenCalculator(null, asList("1", "-", "1"));
+		ArithmeticSequence calculation = tokenCalculator(null, asList("1", "-", "1"));
 		assertThat(calculation.toValue().asString(), is("0"));
 	}
 
 	@Test
 	public void add() {
-		ValueCalculator calculation = tokenCalculator(null, asList("1", "+", "1"));
+		ArithmeticSequence calculation = tokenCalculator(null, asList("1", "+", "1"));
 		assertThat(calculation.toValue().asString(), is("2"));
 	}
 
@@ -110,20 +110,51 @@ public class CalculatorTest {
 		assertThat(tokenCalculator(null, singletonList("1")).toValue().asString(), is("1"));
 	}
 
+	private ArithmeticSequence tokenCalculator(ScriptContext context, List<String> tokens) {
+		ArithmeticSequence sequence = new ArithmeticSequence();
 
-	private ValueCalculator tokenCalculator(ScriptContext context, List<String> tokens) {
-		Builder builder = new Builder();
-
-		ValueParser parser = new ValueParser(context);
+		ValuesParser parser = new ValuesParser(context);
 
 		if (tokens.isEmpty())
-			return builder.build();
+			return sequence;
 
-		builder.plus(parser.parse(new StringScanner(tokens.get(0))));
+		sequence.plus(parser.parse(new StringScanner(tokens.get(0))));
 		for (int operandIndex = 1; operandIndex < tokens.size(); operandIndex += 2)
-			builder.operate(
+			sequence.operateWith(
 					Operators.ofString(tokens.get(operandIndex)),
 					parser.parse(new StringScanner(tokens.get(operandIndex + 1))));
-		return builder.build();
+		return sequence;
+	}
+
+	@Test
+	public void zipValues() {
+		ArithmeticSequence sequence = new ArithmeticSequence();
+		sequence.plus(new Value("2"))
+				.multi(new Value("3"));
+		sequence.zipValues();
+		sequence.reduce(new Value("1"));
+		sequence.zipValues();
+
+		IValue value = sequence.toValue();
+		assertThat(value.asString(), is("5"));
+	}
+
+	@Test
+	public void toValue() {
+		ArithmeticSequence sequence = new ArithmeticSequence();
+		sequence.plus(new Value("2"))
+				.multi(new Value("3"))
+				.reduce(new Value("1"));
+		assertThat(sequence.toValue().asString(), is("5"));
+	}
+
+	@Test
+	public void pop() {
+		ArithmeticSequence sequence = new ArithmeticSequence();
+		sequence.plus(new Value("1"))
+				.plus(new Value("2"))
+				.reduce(new Value("3"));
+		IValue value = sequence.pop();
+		assertThat(value.asString(), is("0"));
 	}
 }

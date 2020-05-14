@@ -6,12 +6,22 @@ import com.zyh.pro.scriptbuilder.main.*;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class ValueParserTest {
+public class ValuesParserTest {
+	@Test
+	public void edge_parse_rightCap_returns_null() {
+		ValuesParser parser = new ValuesParser(null);
+		StringScanner scanner = new StringScanner(")");
+		IValue parse = parser.parse(scanner);
+		assertNull(parse);
+		assertThat(scanner.toString(), is(")"));
+	}
+
 	@Test
 	public void end_parser() {
-		ValueParser parser = new ValueParser(null);
+		ValuesParser parser = new ValuesParser(null);
 		StringScanner scanner = new StringScanner("1+1)");
 		IValue parse = parser.parse(scanner);
 		assertThat(parse.asString(), is("2"));
@@ -20,21 +30,21 @@ public class ValueParserTest {
 
 	@Test
 	public void edge_cdata_contains_leftCap() {
-		ValueParser parser = new ValueParser(null);
+		ValuesParser parser = new ValuesParser(null);
 		assertThat(parser.parse(new StringScanner("\"(string)\"")).asString(), is("(string)"));
 	}
 
 	@Test
 	public void variable_value() {
 		ScriptContext context = new ScriptContext(System.out);
-		context.setVariable("a", "6");
-		ValueParser parser = new ValueParser(context);
+		context.setVariable("a", new Value("6"));
+		ValuesParser parser = new ValuesParser(context);
 		assertThat(parser.parse(new StringScanner("a")).asString(), is("6"));
 	}
 
 	@Test
 	public void string_value() {
-		ValueParser parser = new ValueParser(null);
+		ValuesParser parser = new ValuesParser(null);
 		assertThat(parser.parse(new StringScanner("\";\"")).asString(), is(";"));
 	}
 
@@ -42,7 +52,7 @@ public class ValueParserTest {
 	public void parse_sum_function() {
 		ScriptContext context = new ScriptContext(System.out);
 		context.addFunction(new SumFunction(context));
-		ValueParser parser = new ValueParser(context);
+		ValuesParser parser = new ValuesParser(context);
 		assertThat(parser.parse(new TrimmedStringScanner(new StringScanner("sum(1, 2)"))).asString(), is("3"));
 	}
 
@@ -60,12 +70,12 @@ public class ValueParserTest {
 
 	@Test
 	public void composite_expr() {
-		assertThat(new ValueParser(null).parse(new StringScanner("1+2+1*3-5")).asString(), is("1"));
+		assertThat(new ValuesParser(null).parse(new StringScanner("1+2+1*3-5")).asString(), is("1"));
 	}
 
 	@Test
 	public void reduce() {
-		assertThat(new ValueParser(null).parse(new StringScanner("4-3")).asString(), is("1"));
+		assertThat(new ValuesParser(null).parse(new StringScanner("4-3")).asString(), is("1"));
 	}
 
 	@Test
@@ -85,13 +95,13 @@ public class ValueParserTest {
 
 	@Test
 	public void plus() {
-		IValue value = new ValueParser(null).parse(new StringScanner("1+2"));
+		IValue value = new ValuesParser(null).parse(new StringScanner("1+2"));
 		assertThat(value.asString(), is("3"));
 	}
 
 	@Test
 	public void parse() {
-		IValue value = new ValueParser(null).parse(new StringScanner("3"));
+		IValue value = new ValuesParser(null).parse(new StringScanner("3"));
 		assertThat(value.asString(), is("3"));
 	}
 }

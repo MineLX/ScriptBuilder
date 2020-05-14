@@ -6,11 +6,62 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static com.zyh.pro.scriptbuilder.main.IOperation.doNothing;
+import static java.lang.System.out;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class FunctionTest {
+	@Test
+	public void operations_function_return_value() {
+		ScriptContext context = new ScriptContext(out);
+		IOperation returnAnValue = new ReturnOperation(context, new VariableValue(context, "param"));
+		OperationsFunction function = new OperationsFunction(context, "a", returnAnValue, singletonList("param"));
+		assertThat(function.execute(Params.of(new Value("returnValue"))).asString(), is("returnValue"));
+	}
+
+	@Test
+	public void edge_variable_scope() {
+		ScriptContext context = new ScriptContext(out);
+		context.addFunction(new PrintFunction(context));
+		OperationsFunction function = new OperationsFunction(context, "a", doNothing(), singletonList("param"));
+		context.setVariable("param", new Value("global"));
+		assertThat(context.getVariable("param").asString(), is("global"));
+
+		Params realParams = new Params();
+		realParams.add(new Value("temporary"));
+		function.execute(realParams);
+		assertThat(context.getVariable("param").asString(), is("global"));
+	}
+
+	@Test
+	public void model_params() {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ScriptContext context = new ScriptContext(new PrintStream(output));
+		context.addFunction(new PrintFunction(context));
+
+		Params params = new Params();
+		params.add(new VariableValue(context, "param1"));
+		InvokeFunctionOperation operation = new InvokeFunctionOperation(context, "print", params);
+		OperationsFunction function = new OperationsFunction(context, "a", operation, singletonList("param1"));
+
+		Params realParams = new Params();
+		realParams.add(new Value("printed"));
+		function.execute(realParams);
+		assertThat(new String(output.toByteArray()), is("printed"));
+	}
+
+	@Test
+	public void operations_function() {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ScriptContext context = new ScriptContext(new PrintStream(output));
+		OperationsFunction function = new OperationsFunction(context, "a", () -> context.getOutputStream().print("printed"), emptyList());
+		function.execute(new Params());
+		assertThat(new String(output.toByteArray()), is("printed"));
+	}
 
 	@Test
 	public void sum_function() {
@@ -18,7 +69,7 @@ public class FunctionTest {
 		Params params = new Params();
 		params.add(new Value("1"));
 		params.add(new Value("2"));
-		ReturnValue value = sumFunction.execute(params);
+		Value value = sumFunction.execute(params);
 		assertThat(value.asString(), is("3"));
 	}
 
@@ -41,9 +92,9 @@ public class FunctionTest {
 		ScriptContext context = new ScriptContext(new PrintStream(output));
 		Function helloFunction = new Function(context, "print") {
 			@Override
-			public ReturnValue execute(Params params) {
+			public Value execute(Params params) {
 				context.getOutputStream().print(params.get(0).asString());
-				return super.execute(params);
+				return null;
 			}
 		};
 		Params params = new Params();

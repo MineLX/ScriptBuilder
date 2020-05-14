@@ -1,51 +1,80 @@
 package com.zyh.pro.scriptbuilder.test;
 
-import com.zyh.pro.scanner.main.IStringScanner;
-import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scanner.main.*;
 import com.zyh.pro.scriptbuilder.main.*;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static com.zyh.pro.scanner.main.Matcher.functional;
-import static java.lang.System.out;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class SearchTreeTest {
-
 	@Test
-	public void printDealer() {
-		ScriptContext context = new ScriptContext(out);
+	public void print_assign() {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ScriptContext context = new ScriptContext(new PrintStream(output));
+		context.addFunction(new PrintFunction(context));
 
-		SearchTree.Builder<OperationInterpreter, IStringScanner> builder =
-				new SearchTree.Builder<>(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha));
+		SearchTree.Builder<ToResult<IOperation, IStringScanner>, IStringScanner> builder = new SearchTree.Builder<>();
+		SearchTree.Builder<ToResult<IOperation, IStringScanner>, IStringScanner>.Path alphaPath = builder.path(functional(
+				scanner -> scanner.existsIf(Character::isAlphabetic),
+				IStringScanner::nextPage));
 
-		builder.end(null, functional(scanner -> false, scanner -> {}));
-		builder.end(new AssignInterpreter(context), functional(scanner -> false, scanner -> {}));
+		alphaPath.end(new AssignParser(context)::onMatched, functional(scanner -> scanner.exists("="), IStringScanner::nextChar));
+		alphaPath.end(new FunctionInvocationParser(context)::onMatched, functional(scanner -> scanner.exists("("), IStringScanner::nextChar));
 
-		SearchTree.Builder<OperationInterpreter, IStringScanner>.Path leftCapPath =
-				builder.path(functional(scanner -> scanner.exists("("), IStringScanner::nextChar));
-		leftCapPath.end(null, functional(scanner -> false, scanner -> {}));
+		ToResult<ToResult<IOperation, IStringScanner>, IStringScanner> build = builder.build();
 
-		leftCapPath.path(functional(scanner -> scanner.existsIf(Character::isDigit), IStringScanner::nextFloat))
-				.path(functional(scanner -> scanner.exists(")"), IStringScanner::nextChar))
-				.end(new InvokeFunctionInterpreter(context), functional(scanner -> scanner.exists(";"), IStringScanner::nextChar));
+		StringScanner assignExpr = new StringScanner("a=6;");
+		build.get(assignExpr.copy()).get(assignExpr).execute();
+		assertThat(context.getVariable("a").asString(), is("6"));
 
-		SearchTree<OperationInterpreter, IStringScanner> build = builder.build();
-
-		OperationInterpreter operationInterpreter = build.search(new StringScanner("print(456);"));
-		assertTrue(operationInterpreter instanceof InvokeFunctionInterpreter);
+		StringScanner printExpr = new StringScanner("print(a);");
+		build.get(printExpr.copy()).get(printExpr).execute();
+		assertThat(new String(output.toByteArray()), is("6"));
 	}
 
 	@Test
-	public void tree() {
-		ScriptContext context = new ScriptContext(out);
+	public void double_path() {
+		SearchTree.Builder<String, IStringScanner> builder = new SearchTree.Builder<>();
 
-		SearchTree<OperationInterpreter, IStringScanner> tree = new SearchTree.Builder<OperationInterpreter, IStringScanner>(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha))
-				.path(functional(scanner -> scanner.exists("="), IStringScanner::nextChar))
-				.path(functional(scanner -> scanner.existsIf(Character::isDigit), IStringScanner::nextFloat))
-				.end(new AssignInterpreter(context), functional(scanner -> scanner.exists(";"), IStringScanner::nextChar))
-				.build();
+		SearchTree.Builder<String, IStringScanner>.Path alphaPath =
+				builder.path(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha));
 
-		OperationInterpreter operationInterpreter = tree.search(new StringScanner("a=6;"));
-		assertTrue(operationInterpreter instanceof AssignInterpreter);
+		SearchTree.Builder<String, IStringScanner>.Path alphaDigitAlphaPath =
+				alphaPath.path(functional(scanner -> scanner.existsIf(Character::isDigit), IStringScanner::nextFloat))
+						.path(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha));
+
+		alphaDigitAlphaPath.path(functional(scanner -> scanner.exists(">"), IStringScanner::nextChar))
+				.end("Terminator", functional(scanner -> scanner.exists(";"), IStringScanner::nextChar));
+
+		alphaDigitAlphaPath.end("LeftCap", functional(scanner -> scanner.exists("("), IStringScanner::nextChar));
+
+		ToResult<String, IStringScanner> tree = builder.build();
+		assertThat(tree.get(new StringScanner("alpha123alpha(")), is("LeftCap"));
+		assertThat(tree.get(new StringScanner("alpha123alpha>;")), is("Terminator"));
+	}
+
+	@Test
+	public void builder() {
+		SearchTree.Builder<String, IStringScanner> builder = new SearchTree.Builder<>();
+
+		SearchTree.Builder<String, IStringScanner>.Path alphaPath =
+				builder.path(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha));
+
+		alphaPath.path(functional(scanner -> scanner.existsIf(Character::isDigit), IStringScanner::nextFloat))
+				.path(functional(scanner -> scanner.existsIf(Character::isAlphabetic), IStringScanner::nextAlpha))
+				.end("LeftCap", functional(scanner -> scanner.exists("("), IStringScanner::nextChar));
+
+		alphaPath.end("Terminator", functional(scanner -> scanner.exists(";"), IStringScanner::nextChar));
+
+		ToResult<String, IStringScanner> tree = builder.build();
+
+		assertThat(tree.get(new StringScanner("alpha123alpha(")), is("LeftCap"));
+		assertThat(tree.get(new StringScanner("alpha;")), is("Terminator"));
 	}
 }
