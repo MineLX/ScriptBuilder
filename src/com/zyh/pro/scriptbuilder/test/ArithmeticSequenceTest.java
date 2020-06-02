@@ -2,9 +2,11 @@ package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scanner.main.StringScanner;
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.parser.ValuesParser;
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +18,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ArithmeticSequenceTest {
+	@Test
+	public void pair_of_arithmetic() {
+		ArithmeticSequence.Pair pair = new ArithmeticSequence.Pair(PLUS, new Value("4"));
+		assertThat(pair.getOperand(), is(PLUS));
+		assertThat(pair.getValue().asString(), is("4"));
+	}
+
 	@Test
 	public void sum_function_as_expression() {
 		ScriptContext context = new ScriptContext(System.out);

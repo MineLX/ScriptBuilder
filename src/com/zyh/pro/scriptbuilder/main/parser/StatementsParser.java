@@ -1,9 +1,11 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.parser;
 
 import com.zyh.pro.scanner.main.CompositeMatcher;
-import com.zyh.pro.scanner.main.CompositeToResult;
 import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.ReturnMatcher;
+import com.zyh.pro.scriptbuilder.main.operation.CompositeOperation;
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.ScriptContext;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

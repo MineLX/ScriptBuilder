@@ -1,4 +1,4 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.value;
 
 public interface IValue {
 	String asString();

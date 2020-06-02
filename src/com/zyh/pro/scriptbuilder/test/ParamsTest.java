@@ -1,7 +1,7 @@
 package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scriptbuilder.main.Params;
-import com.zyh.pro.scriptbuilder.main.Value;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

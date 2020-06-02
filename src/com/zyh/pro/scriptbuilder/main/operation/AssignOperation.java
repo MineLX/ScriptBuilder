@@ -1,4 +1,7 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.operation;
+
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.ScriptContext;
 
 public class AssignOperation implements IOperation {
 	private final ScriptContext context;

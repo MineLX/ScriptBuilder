@@ -1,6 +1,9 @@
 package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.operation.CompositeOperation;
+import com.zyh.pro.scriptbuilder.main.operation.InvokeFunctionOperation;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

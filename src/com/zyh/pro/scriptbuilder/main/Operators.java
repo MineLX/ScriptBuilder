@@ -1,5 +1,7 @@
 package com.zyh.pro.scriptbuilder.main;
 
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+
 public enum Operators {
 	PLUS(1, false) {
 		@Override

@@ -1,5 +1,8 @@
 package com.zyh.pro.scriptbuilder.main;
 
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+
 import java.util.List;
 
 public class OperationsFunction extends Function {

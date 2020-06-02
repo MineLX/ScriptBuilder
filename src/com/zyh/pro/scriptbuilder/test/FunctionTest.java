@@ -1,16 +1,20 @@
 package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.operation.InvokeFunctionOperation;
+import com.zyh.pro.scriptbuilder.main.operation.ReturnOperation;
+import com.zyh.pro.scriptbuilder.main.value.Value;
+import com.zyh.pro.scriptbuilder.main.value.VariableValue;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static com.zyh.pro.scriptbuilder.main.IOperation.doNothing;
+import static com.zyh.pro.scriptbuilder.main.operation.IOperation.doNothing;
 import static java.lang.System.out;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

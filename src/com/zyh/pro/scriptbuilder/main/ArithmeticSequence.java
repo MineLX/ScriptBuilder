@@ -1,6 +1,10 @@
 package com.zyh.pro.scriptbuilder.main;
 
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.value.Value;
+
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static com.zyh.pro.scriptbuilder.main.Operators.*;
 
@@ -17,18 +21,15 @@ public class ArithmeticSequence {
 	}
 
 	public ArithmeticSequence plus(IValue value) {
-		operateWith(PLUS, value);
-		return this;
+		return operateWith(PLUS, value);
 	}
 
 	public ArithmeticSequence reduce(IValue value) {
-		operateWith(REDUCE, value);
-		return this;
+		return operateWith(REDUCE, value);
 	}
 
 	public ArithmeticSequence multi(IValue value) {
-		operateWith(MULTI, value);
-		return this;
+		return operateWith(MULTI, value);
 	}
 
 	public ArithmeticSequence operateWith(Operators operator, IValue value) {
@@ -39,6 +40,11 @@ public class ArithmeticSequence {
 		operators.add(operator);
 		values.add(value);
 		return this;
+	}
+
+	public ArithmeticSequence operateWith(Pair pair) {
+		// FIXME 2020/6/2  wait for me!!!  remove .get
+		return operateWith(pair.getOperand(), pair.getValue());
 	}
 
 	private Operators prevPushedOperator() {
@@ -62,5 +68,29 @@ public class ArithmeticSequence {
 	public void zipValues() {
 		while (!operators.isEmpty())
 			pop();
+	}
+
+	public static class Pair {
+		private final Operators operator;
+		private final IValue value;
+
+		public Pair(Operators operator, IValue value) {
+			this.operator = operator;
+			this.value = value;
+		}
+
+		public Operators getOperand() {
+			return operator;
+		}
+
+		public IValue getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			// FIXME 2020/6/2  wait for me!!!
+			return "Pair(" + operator + ", " + value.asString() + ")";
+		}
 	}
 }

@@ -1,16 +1,11 @@
 package com.zyh.pro.scriptbuilder.test;
 
-import com.zyh.pro.scanner.main.CompositeMatcher;
-import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.StringScanner;
-import com.zyh.pro.scanner.main.TrimmedStringScanner;
 import com.zyh.pro.scriptbuilder.main.Params;
-import com.zyh.pro.scriptbuilder.main.ParamsParser;
+import com.zyh.pro.scriptbuilder.main.parser.ParamsParser;
 import com.zyh.pro.scriptbuilder.main.ScriptContext;
-import com.zyh.pro.scriptbuilder.main.SingleMatcher;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

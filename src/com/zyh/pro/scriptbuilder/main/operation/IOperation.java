@@ -1,4 +1,4 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.operation;
 
 public interface IOperation {
 	void execute();

@@ -43,7 +43,7 @@ public class SearchTree<ELEMENT, CLUE> implements ToResult<ELEMENT, CLUE> {
 		return null;
 	}
 
-	public void addChild(SearchTree<ELEMENT, CLUE> child) {
+	private void addChild(SearchTree<ELEMENT, CLUE> child) {
 		children.add(child);
 	}
 

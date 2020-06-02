@@ -1,4 +1,6 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.value;
+
+import com.zyh.pro.scriptbuilder.main.ScriptContext;
 
 public class VariableValue implements IValue {
 	private final ScriptContext context;

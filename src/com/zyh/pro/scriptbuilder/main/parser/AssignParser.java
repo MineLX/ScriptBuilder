@@ -1,9 +1,11 @@
-package com.zyh.pro.scriptbuilder.main;
+package com.zyh.pro.scriptbuilder.main.parser;
 
 import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.ReturnMatcher;
-import com.zyh.pro.scanner.main.StringScanner;
-import com.zyh.pro.scanner.main.TrimmedStringScanner;
+import com.zyh.pro.scriptbuilder.main.operation.AssignOperation;
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.ScriptContext;
 
 public class AssignParser implements ReturnMatcher<IOperation, IStringScanner> {
 

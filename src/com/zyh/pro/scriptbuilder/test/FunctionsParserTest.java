@@ -2,14 +2,14 @@ package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scanner.main.StringScanner;
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.parser.FunctionsParser;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static com.zyh.pro.scriptbuilder.main.Params.of;
 import static java.lang.System.out;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -24,9 +24,9 @@ public class FunctionsParserTest {
 		FunctionsParser parser = new FunctionsParser(context);
 		parser.onMatched(new StringScanner("function a(param){print(param);}")).execute();
 		Function function = context.getFunction("a");
-		function.execute(of(new Value("printed ")));
+		function.execute(Params.of(new Value("printed ")));
 		assertThat(new String(output.toByteArray()), is("printed "));
-		function.execute(of(new Value("printed2")));
+		function.execute(Params.of(new Value("printed2")));
 		assertThat(new String(output.toByteArray()), is("printed printed2"));
 	}
 

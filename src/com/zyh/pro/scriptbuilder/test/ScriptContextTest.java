@@ -1,13 +1,13 @@
 package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
 import static com.zyh.pro.scriptbuilder.main.Params.of;
 import static java.lang.System.out;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 

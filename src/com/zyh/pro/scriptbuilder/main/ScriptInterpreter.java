@@ -4,6 +4,10 @@ import com.zyh.pro.scanner.main.CompositeToResult;
 import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.StringScanner;
 import com.zyh.pro.scanner.main.TrimmedStringScanner;
+import com.zyh.pro.scriptbuilder.main.operation.CompositeOperation;
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.parser.FunctionsParser;
+import com.zyh.pro.scriptbuilder.main.parser.StatementsParser;
 
 import java.io.PrintStream;
 

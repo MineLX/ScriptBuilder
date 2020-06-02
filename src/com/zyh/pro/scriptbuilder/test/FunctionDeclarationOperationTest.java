@@ -1,6 +1,12 @@
 package com.zyh.pro.scriptbuilder.test;
 
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.operation.CompositeOperation;
+import com.zyh.pro.scriptbuilder.main.operation.FunctionDeclareOperation;
+import com.zyh.pro.scriptbuilder.main.operation.IOperation;
+import com.zyh.pro.scriptbuilder.main.operation.InvokeFunctionOperation;
+import com.zyh.pro.scriptbuilder.main.value.Value;
+import com.zyh.pro.scriptbuilder.main.value.VariableValue;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -8,7 +14,6 @@ import java.io.PrintStream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;

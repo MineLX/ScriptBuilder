@@ -1,21 +1,36 @@
 package com.zyh.pro.scriptbuilder.test;
 
+import com.zyh.pro.scanner.main.IStringScanner;
 import com.zyh.pro.scanner.main.StringScanner;
+import com.zyh.pro.scanner.main.ToResult;
 import com.zyh.pro.scanner.main.TrimmedStringScanner;
 import com.zyh.pro.scriptbuilder.main.*;
+import com.zyh.pro.scriptbuilder.main.parser.ValuesParser;
+import com.zyh.pro.scriptbuilder.main.value.FunctionValue;
+import com.zyh.pro.scriptbuilder.main.value.IValue;
+import com.zyh.pro.scriptbuilder.main.value.Value;
 import org.junit.Test;
 
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ValuesParserTest {
+//	@Test
+//	public void edge_value_tokenizer() {
+//		ToResult<String, IStringScanner> tokenizer = ValuesParser.createValueTokenizer();
+//		StringScanner scanner = new StringScanner("concat(\"1)\", \"2\")");
+//		assertThat(scanner.sequence(tokenizer).toList().toString(), is("[1), 2]"));
+//	}
+
 	@Test
-	public void edge_parse_rightCap_returns_null() {
+	public void edge_parse_only_an_rightCap() {
 		ValuesParser parser = new ValuesParser(null);
 		StringScanner scanner = new StringScanner(")");
-		IValue parse = parser.parse(scanner);
-		assertNull(parse);
+		assertNull(parser.parse(scanner));
 		assertThat(scanner.toString(), is(")"));
 	}
 
