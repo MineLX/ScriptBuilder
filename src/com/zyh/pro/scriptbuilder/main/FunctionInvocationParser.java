@@ -5,7 +5,7 @@ import com.zyh.pro.scanner.main.ReturnMatcher;
 import com.zyh.pro.scanner.main.StringScanner;
 import com.zyh.pro.scanner.main.TrimmedStringScanner;
 
-public class FunctionInvocationParser {
+public class FunctionInvocationParser implements ReturnMatcher<IOperation, IStringScanner> {
 
 	private final ScriptContext context;
 
@@ -13,6 +13,7 @@ public class FunctionInvocationParser {
 		this.context = context;
 	}
 
+	@Override
 	public IOperation onMatched(IStringScanner scanner) {
 		String functionName = scanner.nextPage();
 		scanner.nextChar(); // '('
@@ -23,5 +24,14 @@ public class FunctionInvocationParser {
 				context,
 				functionName,
 				params);
+	}
+
+	@Override
+	public boolean isMatch(IStringScanner scanner) {
+		IStringScanner copy = scanner.copy();
+		if (!copy.existsIf(Character::isAlphabetic))
+			return false;
+		copy.nextPage();
+		return copy.exists("(");
 	}
 }

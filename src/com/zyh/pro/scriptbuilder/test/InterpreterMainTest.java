@@ -7,12 +7,14 @@ import java.util.Scanner;
 public class InterpreterMainTest {
 	public static void main(String[] args) {
 		ScriptInterpreter interpreter = new ScriptInterpreter(System.out);
+		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			Scanner scanner = new Scanner(System.in);
-			System.out.print(">>> ");
+			System.out.print("\n>>> ");
 			String command = scanner.nextLine();
-			System.out.println("command = " + command);
+			if (command.equals("exit"))
+				break;
 			interpreter.interpret(command).execute();
 		}
+		scanner.close();
 	}
 }

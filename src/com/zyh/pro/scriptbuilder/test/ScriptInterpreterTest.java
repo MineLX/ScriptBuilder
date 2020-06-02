@@ -13,6 +13,7 @@ public class ScriptInterpreterTest {
 	@Test
 	public void structure() {
 		TestHelper helper = new TestHelper();
+
 	}
 
 	@Test
@@ -101,8 +102,8 @@ public class ScriptInterpreterTest {
 		private final ScriptInterpreter interpreter;
 
 		private TestHelper() {
-			this.outputStream = new ByteArrayOutputStream();
-			this.interpreter = new ScriptInterpreter(new PrintStream(outputStream));
+			outputStream = new ByteArrayOutputStream();
+			interpreter = new ScriptInterpreter(new PrintStream(outputStream));
 		}
 
 		private void execute(String target) {

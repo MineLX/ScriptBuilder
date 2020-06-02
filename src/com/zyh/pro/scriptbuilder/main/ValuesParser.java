@@ -5,7 +5,7 @@ import com.zyh.pro.scanner.main.*;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
-import static com.zyh.pro.scanner.main.ReturnMatcher.functional;
+import static com.zyh.pro.scanner.main.ReturnMatcher.of;
 
 public class ValuesParser {
 
@@ -16,10 +16,10 @@ public class ValuesParser {
 	public ValuesParser(ScriptContext context) {
 		operationsTokenizer = createOperationsTokenizer();
 		singleValueGetter = new CompositeToResult<IValue, String>() // FIXME 2020/5/1  wait for me!!!
-				.add(functional(s -> s.startsWith("\""), StringValue::new))
+				.add(of(s -> s.startsWith("\""), StringValue::new))
 				.add(new FunctionReturnValueMatcher(context))
 				.add(new VariableMatcher(context))
-				.add(functional(s -> true, Value::new));
+				.add(of(s -> true, Value::new));
 	}
 
 	public IValue parse(IStringScanner scanner) {

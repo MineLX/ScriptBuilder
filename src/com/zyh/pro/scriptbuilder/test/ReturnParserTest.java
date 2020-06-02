@@ -15,7 +15,7 @@ public class ReturnParserTest {
 	public void simple_test() {
 		ScriptContext context = new ScriptContext(out);
 		context.pushFunctionFrame(Collections.emptyList(), Params.of());
-		new ReturnParser(context).get(new StringScanner("return \"returnValue\";")).execute();
+		new ReturnParser(context).onMatched(new StringScanner("return \"returnValue\";")).execute();
 		assertThat(context.popFunctionFrame().getReturnValue().asString(), is("returnValue"));
 	}
 }

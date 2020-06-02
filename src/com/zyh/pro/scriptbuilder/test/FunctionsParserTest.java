@@ -22,7 +22,7 @@ public class FunctionsParserTest {
 		context.addFunction(new PrintFunction(context));
 
 		FunctionsParser parser = new FunctionsParser(context);
-		parser.get(new StringScanner("function a(param){print(param);}")).execute();
+		parser.onMatched(new StringScanner("function a(param){print(param);}")).execute();
 		Function function = context.getFunction("a");
 		function.execute(of(new Value("printed ")));
 		assertThat(new String(output.toByteArray()), is("printed "));
@@ -34,7 +34,7 @@ public class FunctionsParserTest {
 	public void edge_parsed_remainder() {
 		FunctionsParser parser = new FunctionsParser(new ScriptContext(out));
 		StringScanner scanner = new StringScanner("function a(){}");
-		parser.get(scanner).execute();
+		parser.onMatched(scanner).execute();
 		assertThat(scanner.toString(), is(""));
 	}
 
@@ -42,7 +42,7 @@ public class FunctionsParserTest {
 	public void simple_test() {
 		ScriptContext context = new ScriptContext(null);
 		FunctionsParser parser = new FunctionsParser(context);
-		parser.get(new StringScanner("function a(){}")).execute();
+		parser.onMatched(new StringScanner("function a(){}")).execute();
 		assertNotNull(context.getFunction("a"));
 	}
 }

@@ -2,11 +2,11 @@ package com.zyh.pro.scriptbuilder.main;
 
 import com.zyh.pro.scanner.main.CompositeToResult;
 import com.zyh.pro.scanner.main.IStringScanner;
-import com.zyh.pro.scanner.main.ToResult;
+import com.zyh.pro.scanner.main.ReturnMatcher;
 
 import java.util.List;
 
-public class FunctionsParser implements ToResult<IOperation, IStringScanner> {
+public class FunctionsParser implements ReturnMatcher<IOperation, IStringScanner> {
 
 	private final ScriptContext context;
 
@@ -21,7 +21,12 @@ public class FunctionsParser implements ToResult<IOperation, IStringScanner> {
 	}
 
 	@Override
-	public IOperation get(IStringScanner scanner) {
+	public boolean isMatch(IStringScanner scanner) {
+		return scanner.exists("function");
+	}
+
+	@Override
+	public IOperation onMatched(IStringScanner scanner) {
 		scanner.pass("function");
 		scanner.trim();
 		String functionName = scanner.nextPage();
@@ -32,7 +37,7 @@ public class FunctionsParser implements ToResult<IOperation, IStringScanner> {
 		scanner.nextChar(); // ')'
 
 		scanner.nextChar(); // '{'
-		IOperation operations = new StatementsParser(context).get(scanner);
+		IOperation operations = new StatementsParser(context).onMatched(scanner);
 		FunctionDeclareOperation result = new FunctionDeclareOperation(context, functionName, operations, modelParamNames);
 		scanner.nextChar(); // '}'
 		return result;

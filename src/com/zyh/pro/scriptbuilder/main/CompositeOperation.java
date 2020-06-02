@@ -20,4 +20,9 @@ public class CompositeOperation implements IOperation {
 	public void add(IOperation operation) {
 		operations.add(operation);
 	}
+
+	public CompositeOperation addAll(List<IOperation> addend) {
+		operations.addAll(addend);
+		return this;
+	}
 }
